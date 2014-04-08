@@ -47,17 +47,34 @@ var Generator = module.exports = function Generator(args, options) {
     this.env.options.coffee = this.options.coffee;
   }
 
-  this.hookFor('angular:common', {
+  if (typeof this.env.options.stylus === 'undefined') {
+    this.option('stylus', {
+      desc: 'Generate Stylus instead of Pure CSS'
+    });
+
+    this.env.options.stylus = this.options.stylus;
+  }
+
+  if (typeof this.env.options.jade === 'undefined') {
+    this.option('jade', {
+      desc: 'Generate Jade instead of HTML'
+    });
+
+    this.env.options.jade = this.options.jade;
+  }
+
+  this.hookFor('angular-jade-stylus:common', {
     args: args
   });
 
-  this.hookFor('angular:main', {
+  this.hookFor('angular-jade-stylus:main', {
     args: args
   });
 
-  this.hookFor('angular:controller', {
+  this.hookFor('angular-jade-stylus:controller', {
     args: args
   });
+  
 
   this.on('end', function () {
     this.installDependencies({
@@ -94,13 +111,13 @@ var Generator = module.exports = function Generator(args, options) {
         ].concat(enabledComponents)
       }
     });
-
   });
 
   this.pkg = require('../package.json');
 };
 
 util.inherits(Generator, yeoman.generators.Base);
+
 
 Generator.prototype.welcome = function welcome() {
   // welcome message
@@ -120,23 +137,7 @@ Generator.prototype.welcome = function welcome() {
   }
 };
 
-Generator.prototype.askForCompass = function askForCompass() {
-  var cb = this.async();
-
-  this.prompt([{
-    type: 'confirm',
-    name: 'compass',
-    message: 'Would you like to use Sass (with Compass)?',
-    default: true
-  }], function (props) {
-    this.compass = props.compass;
-
-    cb();
-  }.bind(this));
-};
-
 Generator.prototype.askForBootstrap = function askForBootstrap() {
-  var compass = this.compass;
   var cb = this.async();
 
   this.prompt([{
@@ -144,17 +145,8 @@ Generator.prototype.askForBootstrap = function askForBootstrap() {
     name: 'bootstrap',
     message: 'Would you like to include Bootstrap?',
     default: true
-  }, {
-    type: 'confirm',
-    name: 'compassBootstrap',
-    message: 'Would you like to use the Sass version of Bootstrap?',
-    default: true,
-    when: function (props) {
-      return props.bootstrap && compass;
-    }
   }], function (props) {
     this.bootstrap = props.bootstrap;
-    this.compassBootstrap = props.compassBootstrap;
 
     cb();
   }.bind(this));
@@ -220,14 +212,22 @@ Generator.prototype.askForModules = function askForModules() {
 
 Generator.prototype.readIndex = function readIndex() {
   this.ngRoute = this.env.options.ngRoute;
-  this.indexFile = this.engine(this.read('../../templates/common/index.html'), this);
+  if (this.env.options.jade) {
+    this.indexFile = this.engine(this.read('../../templates/common/index.jade'), this);
+  } else {
+    this.indexFile = this.engine(this.read('../../templates/commin/index.html'), this);
+  }
 };
 
 Generator.prototype.bootstrapFiles = function bootstrapFiles() {
-  var sass = this.compass;
-  var mainFile = 'main.' + (sass ? 's' : '') + 'css';
+  var stylus = this.env.options.stylus;
+  if (stylus) {
+    var mainFile = 'main.styl';
+  } else {
+    var mainFile = 'main.css';
+  }
 
-  if (this.bootstrap && !sass) {
+  if (this.bootstrap) {
     this.copy('fonts/glyphicons-halflings-regular.eot', 'app/fonts/glyphicons-halflings-regular.eot');
     this.copy('fonts/glyphicons-halflings-regular.ttf', 'app/fonts/glyphicons-halflings-regular.ttf');
     this.copy('fonts/glyphicons-halflings-regular.svg', 'app/fonts/glyphicons-halflings-regular.svg');
@@ -235,6 +235,15 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
   }
 
   this.copy('styles/' + mainFile, 'app/styles/' + mainFile);
+};
+
+Generator.prototype.viewFiles = function viewFiles() {
+  var jade = this.env.options.jade;
+  if (jade) {
+    var mainFile = 'main.styl';
+  } else {
+    var mainFile = 'main.css';
+  }
 };
 
 Generator.prototype.appJs = function appJs() {
@@ -249,11 +258,14 @@ Generator.prototype.appJs = function appJs() {
 
 Generator.prototype.createIndexHtml = function createIndexHtml() {
   this.indexFile = this.indexFile.replace(/&apos;/g, "'");
-  this.write(path.join(this.appPath, 'index.html'), this.indexFile);
+  //this.write(path.join(this.appPath, 'index.html'), this.indexFile);
+  this.write(path.join(this.appPath, 'index.jade'), this.indexFile);
 };
 
 Generator.prototype.packageFiles = function () {
   this.coffee = this.env.options.coffee;
+  this.jade = this.env.options.jade;
+  this.stylus = this.env.options.stylus;
   this.template('../../templates/common/_bower.json', 'bower.json');
   this.template('../../templates/common/_package.json', 'package.json');
   this.template('../../templates/common/Gruntfile.js', 'Gruntfile.js');
@@ -278,11 +290,16 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
       directory: 'app/bower_components',
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
       ignorePath: 'app/',
-      src: 'app/index.html',
+      src: 'app/index.jade',
       fileTypes: {
         html: {
           replace: {
             css: '<link rel="stylesheet" href="{{filePath}}">'
+          }
+        },
+        jade: {
+          replace: {
+            css: 'link(rel="stylesheet", href="{{filePath}}")'
           }
         }
       }

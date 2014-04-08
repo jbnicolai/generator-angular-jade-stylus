@@ -83,14 +83,25 @@ Generator.prototype.htmlTemplate = function (src, dest) {
 Generator.prototype.addScriptToIndex = function (script) {
   try {
     var appPath = this.env.options.appPath;
-    var fullPath = path.join(appPath, 'index.html');
-    angularUtils.rewriteFile({
-      file: fullPath,
-      needle: '<!-- endbuild -->',
-      splicable: [
-        '<script src="scripts/' + script.toLowerCase().replace(/\\/g, '/') + '.js"></script>'
-      ]
-    });
+    if (this.env.options.jade) {
+      var fullPath = path.join(appPath, 'index.jade');
+      angularUtils.rewriteFile({
+        file: fullPath,
+        needle: '// endbuild',
+        splicable: [
+          'script(src="scripts/' + script.toLowerCase().replace(/\\/g, '/') + '.js")'
+        ]
+      });
+    } else {
+      var fullPath = path.join(appPath, 'index.html');
+      angularUtils.rewriteFile({
+        file: fullPath,
+        needle: '<!-- endbuild -->',
+        splicable: [
+          '<script src="scripts/' + script.toLowerCase().replace(/\\/g, '/') + '.js"></script>'
+        ]
+      });
+    }
   } catch (e) {
     console.log('\nUnable to find '.yellow + fullPath + '. Reference to '.yellow + script + '.js ' + 'not added.\n'.yellow);
   }
@@ -108,3 +119,4 @@ Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate,
     this.addScriptToIndex(path.join(targetDirectory, this.name));
   }
 };
+  

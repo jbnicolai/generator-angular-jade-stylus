@@ -49,10 +49,10 @@ module.exports = function (grunt) {
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
-      },<% } %><% if (compass) { %>
-      compass: {
-        files: ['<%%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass:server', 'autoprefixer']
+      },<% } %><% if (stylus) { %>
+      stylus: {
+        files: ['<%%= yeoman.app %>/styles/{,*/}*.{styl}'],
+        tasks: ['stylus:server', 'autoprefixer']
       },<% } else { %>
       styles: {
         files: ['<%%= yeoman.app %>/styles/{,*/}*.css'],
@@ -73,6 +73,56 @@ module.exports = function (grunt) {
         ]
       }
     },
+
+    <% if (stylus) { %>
+    stylus: {
+      server: {
+        options: {
+          compress: false
+        },
+        files: {
+          '.tmp/styles/main.css': ['<%%= yeoman.app %>/styles/{,*/}*.styl']
+        }
+      },
+      dist: {
+        options: {
+          compress: true
+        },
+        files: {
+          '<%%= yeoman.dist %>/styles/main.css': ['<%%= yeoman.app %>/styles/{,*/}*.styl']
+        }
+      }
+    },
+    <% }%>
+
+    <% if (jade) { %>
+    jade: {
+      server: {
+        options: {
+          pretty: true
+        },
+        files: [{
+          expand: true,
+          cwd: '<%%= yeoman.app %>',
+          dest: '.tmp',
+          src: ['*.jade', 'views/{,*/}*.jade'],
+          ext: '.html'
+        }]
+      },
+      dist: {
+        options: {
+          pretty: false
+        },
+        files: [{
+          expand: true,
+          cwd: '<%%= yeoman.app %>',
+          dest: '<%%= yeoman.dist %>',
+          src: ['*.jade', 'views/{,*/}*.jade'],
+          ext: '.html'
+        }]
+      }
+    },
+    <% }%>
 
     // The actual grunt server settings
     connect: {
@@ -160,14 +210,13 @@ module.exports = function (grunt) {
 
     // Automatically inject Bower components into the app
     bowerInstall: {
-      app: {
+      app: {<% if (jade) { %>
+        src: ['.tmp/index.html'],
+        <% } else {%>
         src: ['<%%= yeoman.app %>/index.html'],
+        <% }%>
         ignorePath: '<%%= yeoman.app %>/'
-      }<% if (compass) { %>,
-      sass: {
-        src: ['<%%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        ignorePath: '<%%= yeoman.app %>/bower_components/'
-      }<% } %>
+      }
     },<% if (coffee) { %>
 
     // Compiles CoffeeScript to JavaScript
@@ -193,35 +242,6 @@ module.exports = function (grunt) {
           dest: '.tmp/spec',
           ext: '.js'
         }]
-      }
-    },<% } %><% if (compass) { %>
-
-    // Compiles Sass to CSS and generates necessary files if requested
-    compass: {
-      options: {
-        sassDir: '<%%= yeoman.app %>/styles',
-        cssDir: '.tmp/styles',
-        generatedImagesDir: '.tmp/images/generated',
-        imagesDir: '<%%= yeoman.app %>/images',
-        javascriptsDir: '<%%= yeoman.app %>/scripts',
-        fontsDir: '<%%= yeoman.app %>/styles/fonts',
-        importPath: '<%%= yeoman.app %>/bower_components',
-        httpImagesPath: '/images',
-        httpGeneratedImagesPath: '/images/generated',
-        httpFontsPath: '/styles/fonts',
-        relativeAssets: false,
-        assetCacheBuster: false,
-        raw: 'Sass::Script::Number.precision = 10\n'
-      },
-      dist: {
-        options: {
-          generatedImagesDir: '<%%= yeoman.dist %>/images/generated'
-        }
-      },
-      server: {
-        options: {
-          debugInfo: true
-        }
       }
     },<% } %>
 
@@ -368,18 +388,18 @@ module.exports = function (grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [<% if (coffee) { %>
-        'coffee:dist',<% } %><% if (compass) { %>
-        'compass:server'<% } else { %>
+        'coffee:dist',<% } %><% if (stylus) { %>
+        'stylus:server'<% } else { %>
         'copy:styles'<% } %>
       ],
       test: [<% if (coffee) { %>
-        'coffee',<% } %><% if (compass) { %>
-        'compass'<% } else { %>
+        'coffee',<% } %><% if (stylus) { %>
+        'stylus'<% } else { %>
         'copy:styles'<% } %>
       ],
       dist: [<% if (coffee) { %>
-        'coffee',<% } %><% if (compass) { %>
-        'compass:dist',<% } else { %>
+        'coffee',<% } %><% if (stylus) { %>
+        'stylus:dist',<% } else { %>
         'copy:styles',<% } %>
         'imagemin',
         'svgmin'
@@ -428,7 +448,8 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'clean:server',
+      'clean:server',<% if (jade) { %>
+      'jade:server',<% } %>
       'bowerInstall',
       'concurrent:server',
       'autoprefixer',
@@ -451,7 +472,8 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'clean:dist',
+    'clean:dist',<% if (jade) { %>
+    'jade:dist',<% } %>
     'bowerInstall',
     'useminPrepare',
     'concurrent:dist',

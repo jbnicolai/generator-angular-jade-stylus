@@ -13,7 +13,13 @@ util.inherits(Generator, yeoman.generators.Base);
 Generator.prototype.setupEnv = function setupEnv() {
   // Copies the contents of the generator `templates`
   // directory into your users new application path
-  this.sourceRoot(path.join(__dirname, '../templates/common'));
-  this.directory('root', '.', true);
-  this.copy('gitignore', '.gitignore');
+  if (this.env.options.jade) {
+    this.sourceRoot(path.join(__dirname, '../templates/common'));
+    this.directory('rootJade', '.', true);
+    this.copy('gitignore', '.gitignore');
+  } else {
+    this.sourceRoot(path.join(__dirname, '../templates/common'));
+    this.directory('root', '.', true);
+    this.copy('gitignore', '.gitignore');
+  }
 };
