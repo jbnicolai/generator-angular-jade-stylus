@@ -1,3 +1,11 @@
+<a name="0.8.3"></a>
+## 0.8.3 (2014-04-21)
+
+
+#### Bug Fixes
+
+* fixed wrong path of index.html ([8eaf64b](fantasywind/generator-angular-jade-stylus/commit/8eaf64bf767ebbee85970a38a7ca6d012b243446))
+
 <a name="0.8.2"></a>
 ## 0.8.2 (2014-04-11)
 
