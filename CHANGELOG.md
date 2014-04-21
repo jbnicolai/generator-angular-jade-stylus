@@ -1,3 +1,19 @@
+<a name="0.8.2"></a>
+## 0.8.2 (2014-04-11)
+
+
+#### Bug Fixes
+
+* add jade detect when add script to index ([dcc4000](fantasywind/generator-angular-jade-stylus/commit/dcc40008cc56273b6036f70281e476f328e58cc5))
+
+<a name="0.8.1"></a>
+## 0.8.1 (2014-04-08)
+
+
+#### Features
+
+* add stylus and jade generator ([aa7e34c](fantasywind/generator-angular-jade-stylus/commit/aa7e34ca048af0dd5557e93f973887813473bded))
+
 <a name="0.8.0"></a>
 ## 0.8.0 (2014-03-27)
 

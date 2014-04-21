@@ -1,6 +1,7 @@
 'use strict';
 var util = require('util');
 var path = require('path');
+var fs = require('fs');
 var yeoman = require('yeoman-generator');
 var angularUtils = require('./util.js');
 
@@ -80,7 +81,20 @@ Generator.prototype.htmlTemplate = function (src, dest) {
   ]);
 };
 
+Generator.prototype.testJadeMode = function () {
+  try {
+    if (fs.existsSync(this.env.options.appPath + '/index.jade')) {
+      this.env.options.jade = true
+    } else {
+      this.env.options.jade = false
+    }
+  } catch (ex) {
+    this.env.options.jade = false
+  }
+}
+
 Generator.prototype.addScriptToIndex = function (script) {
+  this.testJadeMode();
   try {
     var appPath = this.env.options.appPath;
     if (this.env.options.jade) {
