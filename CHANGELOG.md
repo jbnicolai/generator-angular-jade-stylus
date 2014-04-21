@@ -1,3 +1,11 @@
+<a name="0.8.4"></a>
+## 0.8.4 (2014-04-22)
+
+
+#### Bug Fixes
+
+* fixed fixed build error ([e76ee17](fantasywind/generator-angular-jade-stylus/commit/e76ee1785812c0c0bc7594c59eda766a75335961))
+
 <a name="0.8.3"></a>
 ## 0.8.3 (2014-04-21)
 
