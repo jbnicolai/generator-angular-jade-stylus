@@ -215,7 +215,7 @@ Generator.prototype.readIndex = function readIndex() {
   if (this.env.options.jade) {
     this.indexFile = this.engine(this.read('../../templates/common/index.jade'), this);
   } else {
-    this.indexFile = this.engine(this.read('../../templates/commin/index.html'), this);
+    this.indexFile = this.engine(this.read('../../templates/common/index.html'), this);
   }
 };
 
