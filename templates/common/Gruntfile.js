@@ -76,6 +76,14 @@ module.exports = function (grunt) {
 
     <% if (stylus) { %>
     stylus: {
+      test: {
+        options: {
+          compress: false
+        },
+        files: {
+          '.tmp/styles/main.css': ['<%%= yeoman.app %>/styles/{,*/}*.styl']
+        }
+      },
       server: {
         options: {
           compress: false
@@ -89,7 +97,7 @@ module.exports = function (grunt) {
           compress: true
         },
         files: {
-          '<%%= yeoman.dist %>/styles/main.css': ['<%%= yeoman.app %>/styles/{,*/}*.styl']
+          '.tmp/styles/main.css': ['<%%= yeoman.app %>/styles/{,*/}*.styl']
         }
       }
     },
@@ -97,10 +105,10 @@ module.exports = function (grunt) {
 
     <% if (jade) { %>
     jade: {
+      options: {
+        pretty: true
+      },
       server: {
-        options: {
-          pretty: true
-        },
         files: [{
           expand: true,
           cwd: '<%%= yeoman.app %>',
@@ -110,9 +118,6 @@ module.exports = function (grunt) {
         }]
       },
       dist: {
-        options: {
-          pretty: false
-        },
         files: [{
           expand: true,
           cwd: '<%%= yeoman.app %>',
@@ -211,7 +216,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     bowerInstall: {
       app: {<% if (jade) { %>
-        src: ['.tmp/index.html'],
+        src: ['<%%= yeoman.app %>/index.jade'],
         <% } else {%>
         src: ['<%%= yeoman.app %>/index.html'],
         <% }%>
@@ -225,7 +230,17 @@ module.exports = function (grunt) {
         sourceMap: true,
         sourceRoot: ''
       },
+      server: {
+        files: [{
+          expand: true,
+          cwd: '<%%= yeoman.app %>/scripts',
+          src: '{,*/}*.coffee',
+          dest: '.tmp/scripts',
+          ext: '.js'
+        }]
+      },
       dist: {
+        sourceMap: false,
         files: [{
           expand: true,
           cwd: '<%%= yeoman.app %>/scripts',
@@ -263,8 +278,9 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: '<%%= yeoman.app %>/index.html',
+      html: '<%%= yeoman.dist %>/index.html',
       options: {
+        root: '<%%= yeoman.app %>',
         dest: '<%%= yeoman.dist %>',
         flow: {
           html: {
@@ -388,18 +404,17 @@ module.exports = function (grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [<% if (coffee) { %>
-        'coffee:dist',<% } %><% if (stylus) { %>
+        'coffee:server',<% } %><% if (stylus) { %>
         'stylus:server'<% } else { %>
         'copy:styles'<% } %>
       ],
       test: [<% if (coffee) { %>
-        'coffee',<% } %><% if (stylus) { %>
-        'stylus'<% } else { %>
+        'coffee:server',
+        'coffee:test',<% } %><% if (stylus) { %>
+        'stylus:test'<% } else { %>
         'copy:styles'<% } %>
       ],
-      dist: [<% if (coffee) { %>
-        'coffee',<% } %><% if (stylus) { %>
-        'stylus:dist',<% } else { %>
+      dist: [<% if (!stylus) { %>
         'copy:styles',<% } %>
         'imagemin',
         'svgmin'
@@ -448,9 +463,9 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'clean:server',<% if (jade) { %>
+      'clean:server',
+      'bowerInstall',<% if (jade) { %>
       'jade:server',<% } %>
-      'bowerInstall',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
@@ -472,9 +487,11 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'clean:dist',<% if (jade) { %>
-    'jade:dist',<% } %>
-    'bowerInstall',
+    'clean:dist',
+    'bowerInstall',<% if (jade) { %>
+    'jade:dist',<% } %><% if (coffee) { %>
+    'coffee:dist',<% } %><% if (stylus) { %>
+    'stylus:dist',<% } %>
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
