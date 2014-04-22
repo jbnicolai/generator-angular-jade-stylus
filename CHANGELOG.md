@@ -1,3 +1,12 @@
+<a name="0.8.5"></a>
+## 0.8.5 (2014-04-22)
+
+
+#### Bug Fixes
+
+* fixed watch task on jade ([b95061c](fantasywind/generator-angular-jade-stylus/commit/b95061cb6bdd61dc30f18f175f945f1007c9c39e))
+
+
 <a name="0.8.4"></a>
 ## 0.8.4 (2014-04-22)
 
