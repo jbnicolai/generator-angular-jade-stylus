@@ -57,7 +57,11 @@ module.exports = function (grunt) {
       styles: {
         files: ['<%%= yeoman.app %>/styles/{,*/}*.css'],
         tasks: ['newer:copy:styles', 'autoprefixer']
-      },<% } %>
+      },<% } %><% if (jade) { %>
+      jade: {
+        files: ['<%%= yeoman.app %>/views/{,*/}*.jade', '<%%= yeoman.app %>/*.jade'],
+        tasks: ['bowerInstall', 'jade:server']
+      }, <% } %>
       gruntfile: {
         files: ['Gruntfile.js']
       },
