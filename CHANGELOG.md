@@ -1,3 +1,12 @@
+<a name="0.8.6"></a>
+## 0.8.6 (2014-04-23)
+
+
+#### Bug Fixes
+
+* fixed #3 Watchers/LiveReload not firing on *.styl & *.jade ([e74409c](fantasywind/generator-angular-jade-stylus/commit/e74409c19aa2909fab96a31d5c926794441b42d9))
+* fixed #2 yo angular-jade-stylus:route myroute doesnt generate jade ([b03650c](fantasywind/generator-angular-jade-stylus/commit/b03650cca2ab68e33b9870158a0e5916f7b07ef4))
+
 <a name="0.8.5"></a>
 ## 0.8.5 (2014-04-22)
 
