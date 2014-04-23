@@ -25,13 +25,6 @@ var Generator = module.exports = function Generator() {
     this.env.options.appPath = this.env.options.appPath || 'app';
   }
 
-  if (typeof this.env.options.testPath === 'undefined') {
-    try {
-      this.env.options.testPath = require(path.join(process.cwd(), 'bower.json')).testPath;
-    } catch (e) {}
-    this.env.options.testPath = this.env.options.testPath || 'test/spec';
-  }
-
   this.env.options.jade = this.options.jade;
   if (typeof this.env.options.jade === 'undefined') {
     this.option('jade');

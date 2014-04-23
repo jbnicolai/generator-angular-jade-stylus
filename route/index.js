@@ -2,13 +2,15 @@
 var path = require('path');
 var util = require('util');
 var ScriptBase = require('../script-base.js');
+var ViewBase = require('../view-base.js');
 var angularUtils = require('../util.js');
 
 
 var Generator = module.exports = function Generator() {
   ScriptBase.apply(this, arguments);
-  this.hookFor('angular:controller');
-  this.hookFor('angular:view');
+  this.hookFor('angular-jade-stylus:controller');
+  ViewBase.apply(this, arguments);
+  this.hookFor('angular-jade-stylus:view');
 };
 
 util.inherits(Generator, ScriptBase);
