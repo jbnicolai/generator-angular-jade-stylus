@@ -51,7 +51,7 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint:test', 'karma']
       },<% } %><% if (stylus) { %>
       stylus: {
-        files: ['<%%= yeoman.app %>/styles/{,*/}*.{styl}'],
+        files: ['<%%= yeoman.app %>/styles/{,*/}*.styl'],
         tasks: ['stylus:server', 'autoprefixer']
       },<% } else { %>
       styles: {
@@ -69,10 +69,13 @@ module.exports = function (grunt) {
         options: {
           livereload: '<%%= connect.options.livereload %>'
         },
-        files: [
-          '<%%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',<% if (coffee) { %>
-          '.tmp/scripts/{,*/}*.js',<% } %>
+        files: [<% if (jade) { %>
+          '.tmp/{,*/}*.html',<% } else {%>
+          '<%%= yeoman.app %>/{,*/}*.html',<% }%><% if (stylus) { %>
+          '.tmp/styles/{,*/}*.css',<% } else {%>
+          '<%%= yeoman.app %>/styles/{,*/}*.css',<% }%><% if (coffee) { %>
+          '.tmp/scripts/{,*/}*.js',<% } else {%>
+          '<%%= yeoman.app %>/scripts/{,*/}*.js',<% }%>
           '<%%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
