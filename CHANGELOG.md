@@ -1,3 +1,10 @@
+<a name="0.8.7"></a>
+## 0.8.7 (2014-04-27)
+
+#### Bug Fixes
+
+* fixed :route cannot generate route script file bug ([0965640](fantasywind/generator-angular-jade-stylus/commit/096564098409dbfcb259ea09e2ef8da614fefbd4))
+
 <a name="0.8.6"></a>
 ## 0.8.6 (2014-04-23)
 
