@@ -47,6 +47,20 @@ var Generator = module.exports = function Generator() {
     this.env.options.coffee = this.options.coffee;
   }
 
+  this.env.options.jade = this.options.jade;
+  if (typeof this.env.options.jade === 'undefined') {
+    this.option('jade');
+    
+    // attempt to detect if user is using CS or not
+    // if cml arg provided, use that; else look for the existence of cs
+    if (!this.options.jade &&
+      this.expandFiles(path.join(this.env.options.appPath, '/views/**/*.jade'), {}).length > 0) {
+      this.options.jade = true;
+    }
+
+    this.env.options.jade = this.options.jade;
+  }
+
   var sourceRoot = '/templates/javascript';
   this.scriptSuffix = '.js';
 

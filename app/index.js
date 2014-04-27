@@ -238,8 +238,8 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
 };
 
 Generator.prototype.viewFiles = function viewFiles() {
-  var jade = this.env.options.jade;
-  if (jade) {
+  var stylus = this.env.options.stylus;
+  if (stylus) {
     var mainFile = 'main.styl';
   } else {
     var mainFile = 'main.css';
@@ -258,8 +258,12 @@ Generator.prototype.appJs = function appJs() {
 
 Generator.prototype.createIndexHtml = function createIndexHtml() {
   this.indexFile = this.indexFile.replace(/&apos;/g, "'");
-  //this.write(path.join(this.appPath, 'index.html'), this.indexFile);
-  this.write(path.join(this.appPath, 'index.jade'), this.indexFile);
+  var jade = this.env.options.jade;
+  if (jade) {
+    this.write(path.join(this.appPath, 'index.jade'), this.indexFile);
+  } else {
+    this.write(path.join(this.appPath, 'index.html'), this.indexFile);
+  }
 };
 
 Generator.prototype.packageFiles = function () {
