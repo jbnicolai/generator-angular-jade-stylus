@@ -456,9 +456,27 @@ module.exports = function (grunt) {
 
     // Test settings
     karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
+      unit: {<% if (coffee) { %>
+        configFile: 'test/karma.conf.coffee',<% } else { %>
+        configFile: 'test/karma.conf.js',<% } %>
+        singleRun: true,
+        options: {
+          basePath: '../',
+          files: [
+            '<%%= yeoman.app %>/bower_components/angular/angular.js',
+            '<%%= yeoman.app %>/bower_components/angular-cookies/angular-cookies.js',
+            '<%%= yeoman.app %>/bower_components/angular-mocks/angular-mocks.js',
+            '<%%= yeoman.app %>/bower_components/angular-resource/angular-resource.js',
+            '<%%= yeoman.app %>/bower_components/angular-route/angular-route.js',
+            '<%%= yeoman.app %>/bower_components/angular-sanitize/angular-sanitize.js',<% if (coffee) { %>
+            '<%%= yeoman.app %>/scripts/**/*.coffee',
+            'test/mock/**/*.coffee',
+            'test/spec/**/*.coffee'<% } else { %>
+            '<%%= yeoman.app %>/scripts/**/*.js',
+            'test/mock/**/*.js',
+            'test/spec/**/*.js'<% } %>
+          ]
+        }
       }
     }
   });
